@@ -8,23 +8,30 @@
     <div class="info">
       <div class="step1" v-if="activeTab === 1">
         <label for="name">Name:</label>
-        <input type="text" id="name">
+        <input v-model="infoUser.name" type="text" id="name">
+        <small v-show="!checkFilledFields.name">blank field!</small>
         <label for="email">Email:</label>
-        <input type="email" id="email">
+        <input v-model="infoUser.email" type="email" id="email">
+        <small v-show="!checkFilledFields.email">blank field!</small>
       </div>
       <div class="step2" v-if="activeTab === 2">
         <label for="number">Number:</label>
-        <input type="text" id="number">
-        <label for="adress">Adress:</label>
-        <input type="email" id="adress">
+        <input v-model="infoUser.number" type="text" id="number">
+        <small v-show="!checkFilledFields.number">blank field!</small>
+        <label for="address">Address:</label>
+        <input v-model="infoUser.address" type="email" id="address">
+        <small v-show="!checkFilledFields.address">blank field!</small>
       </div>
       <div class="step2" v-if="activeTab === 3">
+        <small v-show="!this.checkConfirmPassword">Password is different</small>
         <label for="password">Password:</label>
-        <input type="password" v-model="password" id="password">
+        <input type="password" v-model="infoUser.password" id="password">
+        <small v-show="!checkFilledFields.password">blank field!</small>
         <label for="passwordConfirm">Confirm password:</label>
-        <input type="password" v-model="password2" id="passwordConfirm">
+        <input type="password" v-model="infoUser.password2" id="passwordConfirm">
+        <small v-show="!checkFilledFields.password2">blank field!</small>
       </div>
-      <input type="button" :value="activeTab === 3 ? 'FINISH' : 'NEXT' " @click="changeState">
+      <input type="button" :value="activeTab === 3 ? 'FINISH' : 'NEXT' " @click="checkStepFilled">
     </div>
   </div>
 </template>
@@ -38,30 +45,46 @@ export default {
   data () {
     return {
       activeTab: 1,
-      password: '',
-      password2: ''
+      infoUser: {
+        name: '',
+        email: '',
+        number: '',
+        address: '',
+        password: '',
+        password2: ''
+      },
+      checkFilledFields:{
+        name: true,
+        email: true,
+        number: true,
+        address: true,
+        password: true,
+        password2: true
+      }
     }
   },
   computed: {
     checkConfirmPassword () {
-      return (this.password === this.password2)
-    },
-    checkAllFields () {
-      return this.password
+      return (this.infoUser.password === this.infoUser.password2)
     }
   },
   methods: {
-    changeState () {
-      if (this.activeTab === 3) {
-       if (this.checkConfirmPassword && this.checkAllFields) {
-         console.log('password is true')
-       } else {
-         console.log('password is false')
-       }
-      } else {
-        this.activeTab++
-      }
-    },
+    checkStepFilled () {
+     if (this.activeTab === 1) {
+       this.checkFilledFields.name = !!this.infoUser.name
+       this.checkFilledFields.email = !!this.infoUser.email
+       return this.checkFilledFields.name && this.checkFilledFields.email && this.activeTab++
+     } else if (this.activeTab === 2) {
+       this.checkFilledFields.number = !!this.infoUser.number
+       this.checkFilledFields.address = !!this.infoUser.address
+       return this.checkFilledFields.number && this.checkFilledFields.address && this.activeTab++
+     } else if (this.activeTab === 3) {
+       this.checkFilledFields.password = !!this.infoUser.password
+       this.checkFilledFields.password2 = !!this.infoUser.password2
+       return this.checkConfirmPassword && this.checkFilledFields.password && this.checkFilledFields.password2  && alert(`Hello ${this.infoUser.name}`)
+     }
+
+    }
   }
 }
 </script>
@@ -75,8 +98,10 @@ export default {
     .step1, .step2 {
       display: flex;
       flex-direction: column;
+      small{
+        color: #e21515;
+      }
       input{
-        margin: 15px 0;
         &[type="button"]{
           width: 20%;
         }
