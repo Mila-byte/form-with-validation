@@ -103,7 +103,7 @@ export default {
       }
       input{
         &[type="button"]{
-          width: 20%;
+          width: 30%;
         }
       }
     }
